@@ -21,6 +21,7 @@ const QualityInput = ({ files, path }) => {
 
   return (
     <Form className='mt-3'>
+      <hr />
       <Form.Group controlId='formBasicRange'>
         <Form.Label>Export Quality</Form.Label>
         <Form.Control
@@ -38,6 +39,7 @@ const QualityInput = ({ files, path }) => {
           <Button onClick={handleSubmit}>Submit</Button>
         </div>
       </Form.Group>
+      <hr />
     </Form>
   );
 };
