@@ -1,20 +1,28 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
+import ListGroup from 'react-bootstrap/ListGroup';
 
-export default function Dropzone() {
+import QualityInput from './Controls/QualityInput';
+
+export default function Dropzone({ outputPath }) {
   const onDrop = useCallback(acceptedFiles => {
     // Do something with the files
   }, []);
+
   const {
     getRootProps,
     getInputProps,
     isDragActive,
+    isDragReject,
     acceptedFiles
-  } = useDropzone({ onDrop });
-  const files = acceptedFiles.map(file => <li key={file.path}>{file.path}</li>);
+  } = useDropzone({ onDrop, accept: 'image/jpeg, image/png' });
 
-  if (files.length === 0) {
+  const files = acceptedFiles.map(file => (
+    <ListGroup.Item key={file.path}>{file.name}</ListGroup.Item>
+  ));
+
+  if (files.length === 0 && !isDragReject) {
     return (
       <StyledDropzone {...getRootProps()}>
         <input {...getInputProps()} />
@@ -25,16 +33,42 @@ export default function Dropzone() {
         )}
       </StyledDropzone>
     );
+  } else if (isDragReject) {
+    return (
+      <StyledReject {...getRootProps()}>
+        <input {...getInputProps()} />
+        <p>That file type is not allowed.</p>
+      </StyledReject>
+    );
   } else {
     return (
-      <aside>
+      <StyledAccept className='files'>
         <h4>Files</h4>
-        <ul>{files}</ul>
-      </aside>
+        <ListGroup>{files}</ListGroup>
+        <QualityInput files={acceptedFiles} path={outputPath} />
+      </StyledAccept>
     );
   }
 }
 
 const StyledDropzone = styled.div`
-  border: 1px solid yellow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+  min-height: 5rem;
+  border: 1px solid gray;
+  text-align: center;
+`;
+
+const StyledAccept = styled.div`
+  margin: 2rem 0;
+  min-height: 5rem;
+`;
+
+const StyledReject = styled.div`
+  margin: 2rem 0;
+  min-height: 5rem;
+  border: 1px solid red;
 `;

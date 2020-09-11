@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 const path = require('path');
 const os = require('os');
 
-import Card from 'react-bootstrap/Card';
-
+import Header from './Header';
 import Dropzone from './Dropzone';
+import OutputPath from './Controls/OutputPath';
 
 const App = () => {
+  const [outputPath, setOutputPath] = useState(
+    path.join(os.homedir(), 'image-optimize')
+  );
+
   return (
     <div className='container'>
-      <Dropzone />
-      <Card>
-        <p className='text-center'>
-          Output Path: <b>{path.join(os.homedir(), 'image-optimize')}</b>
-        </p>
-      </Card>
+      <Header />
+      <Dropzone outputPath={outputPath} />
+      <OutputPath outputPath={outputPath} setOutputPath={setOutputPath} />
     </div>
   );
 };

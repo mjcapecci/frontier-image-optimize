@@ -1,6 +1,11 @@
 const path = require('path');
+const os = require('os');
 const url = require('url');
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
+const imagemin = require('imagemin');
+const imageminMozjpeg = require('imagemin-mozjpeg');
+const imageminPngquant = require('imagemin-pngquant');
+const slash = require('slash');
 
 let mainWindow;
 let aboutWindow;
@@ -17,8 +22,9 @@ if (
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
-    width: 1100,
+    width: isDev ? 900 : 500,
     height: 800,
+    resizable: false,
     show: false,
     backgroundColor: 'white',
     icon: `${__dirname}/assets/icon.png`,
@@ -129,6 +135,38 @@ const menu = [
       ]
     : [])
 ];
+
+//  Handle Resize
+
+ipcMain.on('image:minimize', (e, options) => {
+  shrinkImage(options);
+});
+
+async function shrinkImage({ imgPaths, quality, path }) {
+  try {
+    const pngQuality = quality / 100;
+    const files = await imagemin(
+      imgPaths.map(img => slash(img)),
+      {
+        destination: path,
+        plugins: [
+          imageminMozjpeg({ quality }),
+          imageminPngquant({
+            quality: [pngQuality, pngQuality]
+          })
+        ]
+      }
+    );
+    console.log(files);
+    shell.openPath(path);
+  } catch (error) {
+    console.log(error);
+  }
+}
+// -----------
+
+// Handle Reset
+ipcMain.on('app:reset', (e, options) => {});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
