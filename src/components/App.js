@@ -14,7 +14,7 @@ const App = () => {
     path.join(os.homedir(), 'image-optimize')
   );
 
-  const [showToast, setToast] = useState(true);
+  const [showToast, setToast] = useState(false);
 
   // On Done
   ipcRenderer.on('image:done', () => {
