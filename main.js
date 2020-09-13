@@ -27,10 +27,10 @@ function createMainWindow() {
     resizable: false,
     show: false,
     backgroundColor: 'white',
-    icon: `${__dirname}/assets/icon.png`,
+    icon: `${__dirname}/assets/icon.ico`,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   });
 
   let indexPath;
@@ -40,13 +40,13 @@ function createMainWindow() {
       protocol: 'http:',
       host: 'localhost:8080',
       pathname: 'index.html',
-      slashes: true
+      slashes: true,
     });
   } else {
     indexPath = url.format({
       protocol: 'file:',
       pathname: path.join(__dirname, 'dist', 'index.html'),
-      slashes: true
+      slashes: true,
     });
   }
 
@@ -60,10 +60,10 @@ function createMainWindow() {
     if (isDev) {
       const {
         default: installExtension,
-        REACT_DEVELOPER_TOOLS
+        REACT_DEVELOPER_TOOLS,
       } = require('electron-devtools-installer');
 
-      installExtension(REACT_DEVELOPER_TOOLS).catch(err =>
+      installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
         console.log('Error loading React DevTools: ', err)
       );
       mainWindow.webContents.openDevTools();
@@ -85,7 +85,7 @@ function createAboutWindow() {
     width: 300,
     height: 300,
     resizable: false,
-    icon: `${__dirname}/assets/icon.png`
+    icon: `${__dirname}/assets/icon.ico`,
   });
 
   aboutWindow.loadFile('./src/about.html');
@@ -99,14 +99,14 @@ const menu = [
           submenu: [
             {
               label: 'About',
-              click: createAboutWindow
-            }
-          ]
-        }
+              click: createAboutWindow,
+            },
+          ],
+        },
       ]
     : []),
   {
-    role: 'fileMenu'
+    role: 'fileMenu',
   },
   ...(!isMac
     ? [
@@ -115,10 +115,10 @@ const menu = [
           submenu: [
             {
               label: 'About',
-              click: createAboutWindow
-            }
-          ]
-        }
+              click: createAboutWindow,
+            },
+          ],
+        },
       ]
     : []),
   ...(isDev
@@ -129,11 +129,11 @@ const menu = [
             { role: 'reload' },
             { role: 'forcereload' },
             { type: 'separator' },
-            { role: 'toggledevtools' }
-          ]
-        }
+            { role: 'toggledevtools' },
+          ],
+        },
       ]
-    : [])
+    : []),
 ];
 
 //  Handle Resize
@@ -146,15 +146,15 @@ async function shrinkImage({ imgPaths, quality, path }) {
   try {
     const pngQuality = quality / 100;
     const files = await imagemin(
-      imgPaths.map(img => slash(img)),
+      imgPaths.map((img) => slash(img)),
       {
         destination: path,
         plugins: [
           imageminMozjpeg({ quality }),
           imageminPngquant({
-            quality: [pngQuality, pngQuality]
-          })
-        ]
+            quality: [pngQuality, pngQuality],
+          }),
+        ],
       }
     );
 
